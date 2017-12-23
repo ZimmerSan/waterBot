@@ -1,4 +1,4 @@
-package com.example.waterbot.bot;
+package com.tsimura.waterbot;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
