@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Slf4j
 @SpringBootApplication
+@EnableScheduling
 public class BotApplication {
 
 	public static void main(String[] args) {
@@ -27,4 +29,5 @@ public class BotApplication {
 	public UserProfileClient userProfileClient(@Value("${messenger4j.pageAccessToken}") String pageAccessToken) {
 		return MessengerPlatform.newUserProfileClientBuilder(pageAccessToken).build();
 	}
+
 }

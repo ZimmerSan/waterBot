@@ -11,7 +11,7 @@ import com.github.messenger4j.receive.handlers.TextMessageEventHandler;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.QuickReply;
 import com.github.messenger4j.send.SenderAction;
-import com.github.messenger4j.user.UserProfileClient;
+import com.tsimura.waterbot.service.BotService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,13 +31,13 @@ public class MessengerCallbackHandler {
 
     private final MessengerReceiveClient receiveClient;
     private final MessengerSendClient sendClient;
-    private final UserProfileClient userProfileClient;
+    private final BotService botService;
 
     @Autowired
     public MessengerCallbackHandler(@Value("${messenger4j.appSecret}") final String appSecret,
                                     @Value("${messenger4j.verifyToken}") final String verifyToken,
                                     final MessengerSendClient sendClient,
-                                    final UserProfileClient userProfileCleint) {
+                                    final BotService botService) {
         log.debug("Initializing MessengerReceiveClient - appSecret: {} | verifyToken: {}", appSecret, verifyToken);
         this.receiveClient = MessengerPlatform.newReceiveClientBuilder(appSecret, verifyToken)
                 .onTextMessageEvent(newTextMessageEventHandler())
@@ -45,7 +45,7 @@ public class MessengerCallbackHandler {
                 .onQuickReplyMessageEvent(newQuickReplyMessageEventHandler())
                 .build();
         this.sendClient = sendClient;
-        this.userProfileClient = userProfileCleint;
+        this.botService = botService;
     }
 
     @GetMapping
@@ -97,7 +97,7 @@ public class MessengerCallbackHandler {
                         getStarted(senderId);
                         break;
                     default:
-                        sendClient.sendTextMessage(senderId, String.format(MESSAGE_DEFAULT_ANSWER, userProfileClient.queryUserProfile(senderId).getFirstName()));
+                        sendClient.sendTextMessage(senderId, String.format(MESSAGE_DEFAULT_ANSWER, botService.getUserName(senderId)));
                         break;
                 }
             } catch (MessengerApiException | MessengerIOException e) {
@@ -126,9 +126,53 @@ public class MessengerCallbackHandler {
                     case PAYLOAD_CAD_6:
                     case PAYLOAD_CAD_DONT_COUNT:
                         reactCupsADay(senderId, payload);
+                        break;
+                    case PAYLOAD_FRQ_1:
+                        botService.setReminder(senderId, 1);
+                        sendClient.sendTextMessage(senderId, "Thanks! :) Will remind you");
+                        break;
+                    case PAYLOAD_FRQ_2:
+                        botService.setReminder(senderId, 2);
+                        sendClient.sendTextMessage(senderId, "Thanks! :) Will remind you");
+                        break;
+                    case PAYLOAD_FRQ_3:
+                        botService.setReminder(senderId, 3);
+                        sendClient.sendTextMessage(senderId, "Thanks! :) Will remind you");
+                        break;
+                    case PAYLOAD_DONE_1:
+                    case PAYLOAD_DONE_3:
+                    case PAYLOAD_DONE_6:
+                    case PAYLOAD_DONE_8:
+                        sendClient.sendTextMessage(senderId, "Thanks! :) progress saved");
+                        break;
                     default:
                         log.warn("No scenario for quickReply payload = {}", payload);
                         sendClient.sendSenderAction(senderId, SenderAction.MARK_SEEN);
+                        break;
+                }
+            } catch (MessengerApiException | MessengerIOException e) {
+                handleSendException(e);
+            }
+        };
+    }
+
+    private PostbackEventHandler newPostbackEventHandler() {
+        return event -> {
+            final String senderId = event.getSender().getId();
+            final String recipientId = event.getRecipient().getId();
+            final String payload = event.getPayload();
+            final Date timestamp = event.getTimestamp();
+
+            log.info("Received postback for user '{}' and page '{}' with payload '{}' at '{}'",
+                    senderId, recipientId, payload, timestamp);
+
+            try {
+                switch (payload) {
+                    case PAYLOAD_GET_STARTED:
+                        getStarted(senderId);
+                        break;
+                    default:
+                        log.warn("No scenario for postback payload = {}", payload);
                         break;
                 }
             } catch (MessengerApiException | MessengerIOException e) {
@@ -168,31 +212,6 @@ public class MessengerCallbackHandler {
                         .build());
     }
 
-    private PostbackEventHandler newPostbackEventHandler() {
-        return event -> {
-            final String senderId = event.getSender().getId();
-            final String recipientId = event.getRecipient().getId();
-            final String payload = event.getPayload();
-            final Date timestamp = event.getTimestamp();
-
-            log.info("Received postback for user '{}' and page '{}' with payload '{}' at '{}'",
-                    senderId, recipientId, payload, timestamp);
-
-            try {
-                switch (payload) {
-                    case PAYLOAD_GET_STARTED:
-                        getStarted(senderId);
-                        break;
-                    default:
-                        log.warn("No scenario for postback payload = {}", payload);
-                        break;
-                }
-            } catch (MessengerApiException | MessengerIOException e) {
-                handleSendException(e);
-            }
-        };
-    }
-
     private void start(String senderId) throws MessengerApiException, MessengerIOException {
         sendClient.sendTextMessage(senderId, MESSAGE_BEFORE_WE_BEGIN);
         sendClient.sendSenderAction(senderId, SenderAction.TYPING_ON);
@@ -206,7 +225,7 @@ public class MessengerCallbackHandler {
     }
 
     private void getStarted(String senderId) throws MessengerApiException, MessengerIOException {
-        sendClient.sendTextMessage(senderId, String.format(MESSAGE_GREETING, userProfileClient.queryUserProfile(senderId).getFirstName()));
+        sendClient.sendTextMessage(senderId, String.format(MESSAGE_GREETING, botService.getUserName(senderId)));
         sendClient.sendSenderAction(senderId, SenderAction.TYPING_ON);
         sendClient.sendTextMessage(senderId, MESSAGE_GET_STARTED, QuickReply.newListBuilder().addTextQuickReply("Let's Start!", PAYLOAD_START).toList().build());
     }
@@ -214,4 +233,5 @@ public class MessengerCallbackHandler {
     private void handleSendException(Exception e) {
         log.error("Message could not be sent. An unexpected error occurred.", e);
     }
+
 }

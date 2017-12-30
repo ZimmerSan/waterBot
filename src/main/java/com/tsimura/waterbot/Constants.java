@@ -21,6 +21,11 @@ public interface Constants {
     String PAYLOAD_FRQ_2 = "2_reminders";
     String PAYLOAD_FRQ_1 = "1_reminder";
 
+    String PAYLOAD_DONE_1 = "1_2_done";
+    String PAYLOAD_DONE_3 = "3_5_done";
+    String PAYLOAD_DONE_6 = "6_8_done";
+    String PAYLOAD_DONE_8 = "8_done";
+
     /*
     * Messages
     */
