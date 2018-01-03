@@ -177,6 +177,9 @@ public class MessengerCallbackHandler {
                     case PAYLOAD_GET_STARTED:
                         getStarted(senderId);
                         break;
+                    case PAYLOAD_START:
+                        start(senderId);
+                        break;
                     default:
                         log.warn("No scenario for postback payload = {}", payload);
                         break;
