@@ -74,6 +74,11 @@ public class MessengerCallbackHandler {
         }
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<String> test() {
+        return ResponseEntity.status(HttpStatus.OK).body("Hey!");
+    }
+
     private TextMessageEventHandler newTextMessageEventHandler() {
         return event -> {
             log.debug("Received TextMessageEvent: {}", event);
