@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -cp target/classes/com/tsimura/waterbot/BotApplication.class
+web: java -Dserver.port=$PORT -jar target/bot-0.0.1.jar
