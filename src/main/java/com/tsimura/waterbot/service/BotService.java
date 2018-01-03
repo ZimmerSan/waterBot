@@ -45,10 +45,6 @@ public class BotService {
         }
     }
 
-    public void test() {
-        sendEveningNotification();
-    }
-
     @Scheduled(cron = "0 3 10 * * *")
     private void sendDaily() {
         sendReminders(1, "Good morning %s :) don't forget drink water today");

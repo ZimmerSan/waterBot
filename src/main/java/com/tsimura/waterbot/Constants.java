@@ -26,6 +26,8 @@ public interface Constants {
     String PAYLOAD_DONE_6 = "6_8_done";
     String PAYLOAD_DONE_8 = "8_done";
 
+    String PAYLOAD_BTN_DONE = "btn_done";
+
     /*
     * Messages
     */
@@ -45,7 +47,7 @@ public interface Constants {
     String MESSAGE_SET_DAILY_REMINDER = "Set a daily reminder to keep track with your good work";
 
     List<String> HELLO_MESSAGES = Arrays.asList(
-            "He there :) I am WaterBot! here to help you drink more water and become healthier",
+            "Hey there :) I am WaterBot! here to help you drink more water and become healthier",
             "Hi! Got your water today?",
             "Hi there am WaterBot"
     );

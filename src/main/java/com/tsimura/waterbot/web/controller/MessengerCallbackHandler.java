@@ -93,9 +93,6 @@ public class MessengerCallbackHandler {
 
             try {
                 switch (messageText.toLowerCase()) {
-                    case "test":
-                        botService.test();
-                        break;
                     case "hi":
                     case "hello":
                     case "hey":
@@ -133,25 +130,26 @@ public class MessengerCallbackHandler {
                     case PAYLOAD_CAD_3:
                     case PAYLOAD_CAD_6:
                     case PAYLOAD_CAD_DONT_COUNT:
-                        reactCupsADay(senderId, payload);
+                        processCupsADay(senderId, payload);
                         break;
                     case PAYLOAD_FRQ_1:
-                        botService.setReminder(senderId, 1);
-                        sendClient.sendTextMessage(senderId, "Thanks! :) Will remind you");
+                        processFrequency(senderId, 1);
                         break;
                     case PAYLOAD_FRQ_2:
-                        botService.setReminder(senderId, 2);
-                        sendClient.sendTextMessage(senderId, "Thanks! :) Will remind you");
+                        processFrequency(senderId, 2);
                         break;
                     case PAYLOAD_FRQ_3:
-                        botService.setReminder(senderId, 3);
-                        sendClient.sendTextMessage(senderId, "Thanks! :) Will remind you");
+                        processFrequency(senderId, 3);
                         break;
                     case PAYLOAD_DONE_1:
                     case PAYLOAD_DONE_3:
                     case PAYLOAD_DONE_6:
                     case PAYLOAD_DONE_8:
                         sendClient.sendTextMessage(senderId, "Thanks! :) progress saved");
+                        break;
+                    case PAYLOAD_BTN_DONE:
+                        sendClient.sendImageAttachment(senderId, IMG_SATISFIED);
+                        sendClient.sendTextMessage(senderId, String.format("Well done %s! Keep it up!", botService.getUserName(senderId)));
                         break;
                     default:
                         log.warn("No scenario for quickReply payload = {}", payload);
@@ -189,7 +187,17 @@ public class MessengerCallbackHandler {
         };
     }
 
-    private void reactCupsADay(String senderId, String payload) throws MessengerApiException, MessengerIOException {
+    private void processFrequency(String senderId, int frequency) throws MessengerApiException, MessengerIOException {
+        botService.setReminder(senderId, frequency);
+
+        sendClient.sendTextMessage(senderId, "Noted :) Let's give it a try now");
+        sendClient.sendTextMessage(senderId, "Drink 1 cup of water and press the button",
+                QuickReply.newListBuilder()
+                        .addTextQuickReply("Done", PAYLOAD_BTN_DONE).toList()
+                        .build());
+    }
+
+    private void processCupsADay(String senderId, String payload) throws MessengerApiException, MessengerIOException {
         switch (payload) {
             case PAYLOAD_CAD_1:
             case PAYLOAD_CAD_DONT_COUNT:
