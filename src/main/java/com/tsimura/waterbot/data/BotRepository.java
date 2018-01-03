@@ -16,7 +16,7 @@ public class BotRepository {
     }
 
     public void saveUserReminder(String userId, int frequency) {
-        jdbcTemplate.update("INSERT INTO users (user_id, frequency) VALUES(?, ?) ON DUPLICATE KEY UPDATE frequency=?", userId, frequency, frequency);
+        jdbcTemplate.update("INSERT INTO users (user_id, frequency) VALUES(?, ?) ON CONFLICT (user_id) DO UPDATE set frequency = ?", userId, frequency, frequency);
     }
 
     public List<String> getUsersByReminder(int frequency) {
