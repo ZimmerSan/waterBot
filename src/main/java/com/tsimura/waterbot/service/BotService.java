@@ -46,7 +46,7 @@ public class BotService {
     }
 
     public void test() {
-        repository.getAllUsers().forEach(u -> log.debug("u = {}", u));
+        sendEveningNotification();
     }
 
     @Scheduled(cron = "0 3 10 * * *")
