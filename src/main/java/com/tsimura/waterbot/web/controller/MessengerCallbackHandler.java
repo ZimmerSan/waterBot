@@ -93,6 +93,9 @@ public class MessengerCallbackHandler {
 
             try {
                 switch (messageText.toLowerCase()) {
+                    case "test":
+                        botService.test();
+                        break;
                     case "hi":
                     case "hello":
                     case "hey":

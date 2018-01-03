@@ -45,6 +45,10 @@ public class BotService {
         }
     }
 
+    public void test() {
+        repository.getAllUsers().forEach(u -> log.debug("u = {}", u));
+    }
+
     @Scheduled(cron = "0 3 10 * * *")
     private void sendDaily() {
         sendReminders(1, "Good morning %s :) don't forget drink water today");
