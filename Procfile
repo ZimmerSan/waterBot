@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -cp target/classes:target/dependency/* BotApplication
+web: java $JAVA_OPTS -cp target/classes/com/tsimura/waterbot/BotApplication.class
