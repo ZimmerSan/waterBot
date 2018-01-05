@@ -4,6 +4,7 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.QuickReply;
+import com.github.messenger4j.user.UserProfile;
 import com.github.messenger4j.user.UserProfileClient;
 import com.tsimura.waterbot.Constants;
 import com.tsimura.waterbot.data.BotRepository;
@@ -54,15 +55,15 @@ public class BotService {
         int hour = now.get(Calendar.HOUR_OF_DAY);
         log.debug("calendar = {}, hour = {}", now, hour);
 
-//        repository.getAllUsers().forEach(id -> {
-//            try {
-//                UserProfile userProfile = userProfileClient.queryUserProfile(id);
-//                userProfile.
-//            } catch (MessengerApiException | MessengerIOException e) {
-//                e.printStackTrace();
-//            }
-//        });
-//        log.debug("sendNotifications invoked");
+        repository.getAllUsers().forEach(id -> {
+            try {
+                UserProfile userProfile = userProfileClient.queryUserProfile(id);
+                Float timezoneOffset = userProfile.getTimezoneOffset();
+                log.debug("id = {}, user = {}, timezoneOffset = {}", id, userProfile.getFirstName(), timezoneOffset);
+            } catch (MessengerApiException | MessengerIOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Scheduled(cron = "0 3 8 * * *")
