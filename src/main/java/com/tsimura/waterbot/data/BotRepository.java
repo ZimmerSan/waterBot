@@ -24,7 +24,7 @@ public class BotRepository {
     }
 
     public int getUserFrequency(String id) {
-        return jdbcTemplate.queryForObject("select FREQUENCY from users where id = ?", Integer.class, id);
+        return jdbcTemplate.queryForObject("select FREQUENCY from users where user_id = ?", Integer.class, id);
     }
 
     public List<String> getAllUsers() {
