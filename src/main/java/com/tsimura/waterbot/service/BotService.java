@@ -48,7 +48,11 @@ public class BotService {
     @Scheduled(cron = "0 0/5 * * * *")
     private void sendNotifications() {
         log.debug("sendNotifications invoked");
-        repository.getAllUsers().forEach(u -> log.debug("user = {}, {}", u, getUserName(u)));
+        try {
+            sendClient.sendTextMessage("1630232380376445", "test");
+        } catch (MessengerApiException | MessengerIOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Scheduled(cron = "0 3 8 * * *")
