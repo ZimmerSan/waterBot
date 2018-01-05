@@ -49,6 +49,13 @@ public class BotService {
         }
     }
 
+
+
+    @Scheduled(cron = "0 0/5 * * * *")
+    private void keepAwake() {
+        log.debug("Don't sleep, dyno!");
+    }
+
     @Scheduled(cron = "0 0/2 * * * *")
     private void sendNotifications() {
         GregorianCalendar now = new GregorianCalendar();
@@ -58,8 +65,9 @@ public class BotService {
         repository.getAllUsers().forEach(id -> {
             try {
                 UserProfile userProfile = userProfileClient.queryUserProfile(id);
-                Float timezoneOffset = userProfile.getTimezoneOffset();
-                log.debug("id = {}, user = {}, timezoneOffset = {}", id, userProfile.getFirstName(), timezoneOffset);
+                float userHour = hour + userProfile.getTimezoneOffset();
+//                List<String> userFrequency = repository.getUserFrequency(id);
+                log.debug("id = {}, user = {}, hour = {}", id, userProfile.getFirstName(), userHour);
             } catch (MessengerApiException | MessengerIOException e) {
                 e.printStackTrace();
             }
