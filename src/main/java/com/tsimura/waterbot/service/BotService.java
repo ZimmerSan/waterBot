@@ -45,9 +45,9 @@ public class BotService {
         }
     }
 
-    @Scheduled(cron = "0 50 16 * * *")
+    @Scheduled(cron = "0 0-5 17 * * *")
     private void sendTest() {
-        sendReminders(1, "Hey %s :) This is a test notification (scheduled with cron to 16:50) to check whether the problem is in Heroku dyno falling asleep.");
+        sendReminders(1, "Hey %s :) This is a test notification (scheduled with cron to 17:00-17:05) to check whether the problem is in Heroku dyno falling asleep.");
     }
 
     @Scheduled(cron = "0 3 8 * * *")
