@@ -49,12 +49,6 @@ public class BotService {
         }
     }
 
-
-    @Scheduled(cron = "0 0/5 * * * *")
-    private void keepAwake() {
-        log.debug("Don't sleep, dyno!");
-    }
-
     private boolean checkHour(float hour, int exact) {
         return hour >= exact && hour < (exact + 1);
     }
