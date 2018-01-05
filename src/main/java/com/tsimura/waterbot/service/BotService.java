@@ -50,73 +50,66 @@ public class BotService {
     }
 
 
-
     @Scheduled(cron = "0 0/5 * * * *")
     private void keepAwake() {
         log.debug("Don't sleep, dyno!");
     }
 
+    private boolean checkHour(float hour, int exact) {
+        return hour >= exact && hour < (exact + 1);
+    }
+
     @Scheduled(cron = "0 0/2 * * * *")
     private void sendNotifications() {
-        GregorianCalendar now = new GregorianCalendar();
-        int hour = now.get(Calendar.HOUR_OF_DAY);
-        log.debug("calendar = {}, hour = {}", now, hour);
+        int hour = new GregorianCalendar().get(Calendar.HOUR_OF_DAY);
 
         repository.getAllUsers().forEach(id -> {
             try {
                 UserProfile userProfile = userProfileClient.queryUserProfile(id);
                 float userHour = hour + userProfile.getTimezoneOffset();
-//                List<String> userFrequency = repository.getUserFrequency(id);
-                log.debug("id = {}, user = {}, hour = {}", id, userProfile.getFirstName(), userHour);
+                int userFrequency = repository.getUserFrequency(id);
+
+                log.debug("id = {}, user = {}, hour = {}, userFrequency = {}", id, userProfile.getFirstName(), userHour, userFrequency);
+
+                if (userFrequency >= 1 && checkHour(userHour, 10)) {
+                    sendNotification(id, "Good morning %s :) don't forget drink water today");
+                } else if (userFrequency >= 2 && checkHour(userHour, 14)) {
+                    sendNotification(id, "Hey %s ;) don't forget drink water!");
+                } else if (userFrequency == 3 && checkHour(userHour, 18)) {
+                    sendNotification(id, "Hi %s ;) doing well with your water challenge?");
+                } else if (checkHour(userHour, 20)) {
+                    sendEveningNotification(id);
+                }
+
             } catch (MessengerApiException | MessengerIOException e) {
                 e.printStackTrace();
             }
         });
     }
 
-    @Scheduled(cron = "0 3 8 * * *")
-    private void sendDaily() {
-        sendReminders(1, "Good morning %s :) don't forget drink water today");
-    }
-
-    @Scheduled(cron = "0 3 12 * * *")
-    private void sendTwice() {
-        sendReminders(2, "Hey %s ;) don't forget drink water!");
-    }
-
-    @Scheduled(cron = "0 3 15 * * *")
-    private void sendThreeTimes() {
-        sendReminders(3, "Hi %s ;) doing well with your water challenge?");
-    }
-
-    @Scheduled(cron = "0 3 17 * * *")
-    private void sendEveningNotification() {
-        repository.getAllUsers().forEach(id -> {
-            try {
-                sendClient.sendImageAttachment(id, Constants.IMG_WATER_REMINDER);
-                sendClient.sendTextMessage(id,
-                        String.format("So how many glasses of water have you drank today %s?", getUserName(id)),
-                        QuickReply.newListBuilder()
+    private void sendEveningNotification(String id) {
+        try {
+            sendClient.sendImageAttachment(id, Constants.IMG_WATER_REMINDER);
+            sendClient.sendTextMessage(id,
+                    String.format("So how many glasses of water have you drank today %s?", getUserName(id)),
+                    QuickReply.newListBuilder()
                             .addTextQuickReply("1-2", PAYLOAD_DONE_1).toList()
                             .addTextQuickReply("3-5", PAYLOAD_DONE_3).toList()
                             .addTextQuickReply("6-8", PAYLOAD_DONE_6).toList()
                             .addTextQuickReply("8+", PAYLOAD_DONE_8).toList()
                             .build());
-            } catch (MessengerApiException | MessengerIOException e) {
-                e.printStackTrace();
-            }
-        });
+        } catch (MessengerApiException | MessengerIOException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void sendReminders(int minFrequency, String text) {
-        repository.getUsersByReminder(minFrequency).forEach(id -> {
-            try {
-                sendClient.sendImageAttachment(id, Constants.IMG_WATER_REMINDER);
-                sendClient.sendTextMessage(id, String.format(text, getUserName(id)));
-            } catch (MessengerApiException | MessengerIOException e) {
-                e.printStackTrace();
-            }
-        });
+    private void sendNotification(String id, String text) {
+        try {
+            sendClient.sendImageAttachment(id, Constants.IMG_WATER_REMINDER);
+            sendClient.sendTextMessage(id, String.format(text, getUserName(id)));
+        } catch (MessengerApiException | MessengerIOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

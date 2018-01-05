@@ -23,8 +23,8 @@ public class BotRepository {
         return jdbcTemplate.queryForList("select USER_ID from users where frequency >= ?", String.class, frequency);
     }
 
-    public List<String> getUserFrequency(String id) {
-        return jdbcTemplate.queryForList("select FREQUENCY from users where id = ?", String.class, id);
+    public int getUserFrequency(String id) {
+        return jdbcTemplate.queryForObject("select FREQUENCY from users where id = ?", Integer.class, id);
     }
 
     public List<String> getAllUsers() {
