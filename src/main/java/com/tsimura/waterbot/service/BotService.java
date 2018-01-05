@@ -48,7 +48,7 @@ public class BotService {
     @Scheduled(cron = "0 0/5 * * * *")
     private void sendNotifications() {
         log.debug("sendNotifications invoked");
-        repository.getAllUsers().forEach(u -> log.debug("user = {}", u));
+        repository.getAllUsers().forEach(u -> log.debug("user = {}, {}", u, getUserName(u)));
     }
 
     @Scheduled(cron = "0 3 8 * * *")
