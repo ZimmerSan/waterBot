@@ -45,22 +45,27 @@ public class BotService {
         }
     }
 
-    @Scheduled(cron = "0 3 10 * * *")
+    @Scheduled(cron = "0 50 16 * * *")
+    private void sendTest() {
+        sendReminders(1, "Hey %s :) This is a test notification (scheduled with cron to 16:50) to check whether the problem is in Heroku dyno falling asleep.");
+    }
+
+    @Scheduled(cron = "0 3 8 * * *")
     private void sendDaily() {
         sendReminders(1, "Good morning %s :) don't forget drink water today");
     }
 
-    @Scheduled(cron = "0 3 14 * * *")
+    @Scheduled(cron = "0 3 12 * * *")
     private void sendTwice() {
         sendReminders(2, "Hey %s ;) don't forget drink water!");
     }
 
-    @Scheduled(cron = "0 3 18 * * *")
+    @Scheduled(cron = "0 3 15 * * *")
     private void sendThreeTimes() {
         sendReminders(3, "Hi %s ;) doing well with your water challenge?");
     }
 
-    @Scheduled(cron = "0 3 20 * * *")
+    @Scheduled(cron = "0 3 17 * * *")
     private void sendEveningNotification() {
         repository.getAllUsers().forEach(id -> {
             try {
