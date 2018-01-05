@@ -45,9 +45,9 @@ public class BotService {
         }
     }
 
-//    @Scheduled(cron = "0 0-5 17 * * *")
-    private void sendTest() {
-        sendReminders(1, "Hey %s :) This is a test notification (scheduled with cron to 17:00-17:05) to check whether the problem is in Heroku dyno falling asleep.");
+    @Scheduled(cron = "* /5 * * * *")
+    private void sendNotifications() {
+        repository.getAllUsers().forEach(u -> log.debug("user = {}", u));
     }
 
     @Scheduled(cron = "0 3 8 * * *")
