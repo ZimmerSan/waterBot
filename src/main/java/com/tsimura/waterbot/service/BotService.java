@@ -59,7 +59,7 @@ public class BotService {
         return hour >= exact && hour < (exact + 1);
     }
 
-    @Scheduled(cron = "0 * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     private void sendNotifications() {
         int hour = new GregorianCalendar().get(Calendar.HOUR_OF_DAY);
 
