@@ -59,7 +59,7 @@ public class BotService {
         return hour >= exact && hour < (exact + 1);
     }
 
-    @Scheduled(cron = "0 0/2 * * * *")
+    @Scheduled(cron = "0 * * * *")
     private void sendNotifications() {
         int hour = new GregorianCalendar().get(Calendar.HOUR_OF_DAY);
 
@@ -69,8 +69,9 @@ public class BotService {
                 float userHour = hour + userProfile.getTimezoneOffset();
                 int userFrequency = repository.getUserFrequency(id);
 
-                log.debug("id = {}, user = {}, hour = {}, userFrequency = {}", id, userProfile.getFirstName(), userHour, userFrequency);
+                if (id.equals("1630232380376445")) sendNotification(id, "Bro, hour is = " + userHour);
 
+                log.debug("id = {}, user = {}, hour = {}, userFrequency = {}", id, userProfile.getFirstName(), userHour, userFrequency);
                 if (userFrequency >= 1 && checkHour(userHour, 10)) {
                     sendNotification(id, "Good morning %s :) don't forget drink water today");
                 } else if (userFrequency >= 2 && checkHour(userHour, 14)) {
@@ -80,7 +81,6 @@ public class BotService {
                 } else if (checkHour(userHour, 20)) {
                     sendEveningNotification(id);
                 }
-
             } catch (MessengerApiException | MessengerIOException e) {
                 e.printStackTrace();
             }
