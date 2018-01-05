@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import static com.tsimura.waterbot.Constants.*;
 
 @Slf4j
@@ -45,14 +48,21 @@ public class BotService {
         }
     }
 
-    @Scheduled(cron = "0 0/5 * * * *")
+    @Scheduled(cron = "0 0/2 * * * *")
     private void sendNotifications() {
-        log.debug("sendNotifications invoked");
-        try {
-            sendClient.sendTextMessage("1630232380376445", "test");
-        } catch (MessengerApiException | MessengerIOException e) {
-            e.printStackTrace();
-        }
+        GregorianCalendar now = new GregorianCalendar();
+        int hour = now.get(Calendar.HOUR_OF_DAY);
+        log.debug("calendar = {}, hour = {}", now, hour);
+
+//        repository.getAllUsers().forEach(id -> {
+//            try {
+//                UserProfile userProfile = userProfileClient.queryUserProfile(id);
+//                userProfile.
+//            } catch (MessengerApiException | MessengerIOException e) {
+//                e.printStackTrace();
+//            }
+//        });
+//        log.debug("sendNotifications invoked");
     }
 
     @Scheduled(cron = "0 3 8 * * *")
