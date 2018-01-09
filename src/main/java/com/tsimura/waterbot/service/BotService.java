@@ -63,9 +63,6 @@ public class BotService {
                 float userHour = hour + userProfile.getTimezoneOffset();
                 int userFrequency = repository.getUserFrequency(id);
 
-                if (id.equals("1630232380376445")) sendNotification(id, "Bro, hour is = " + userHour);
-
-                log.debug("id = {}, user = {}, hour = {}, userFrequency = {}", id, userProfile.getFirstName(), userHour, userFrequency);
                 if (userFrequency >= 1 && checkHour(userHour, 10)) {
                     sendNotification(id, "Good morning %s :) don't forget drink water today");
                 } else if (userFrequency >= 2 && checkHour(userHour, 14)) {
